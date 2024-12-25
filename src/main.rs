@@ -22,6 +22,15 @@ struct Mine {
     pub y: i32,
 }
 
+impl Clone for Mine {
+    fn clone(&self) -> Self {
+        Mine {
+            x: self.x,
+            y: self.y
+        }
+    }
+}
+
 struct NumberTile {
     pub x: i32,
     pub y: i32,
@@ -54,11 +63,17 @@ impl Clone for InitializingTile {
     }
 }
 
-fn gen_board(width: usize, height: usize, mines: i32) {
+fn gen_board(width: i32, height: i32, mines: i32) {
     let mut rng = rand::thread_rng();
-    let mine_coords: HashSet<(usize, usize)> = (0..mines)
+    let mine_coords: HashSet<(i32, i32)> = (0..mines)
         .map(|_| (rng.gen_range(0..=width), rng.gen_range(0..=height)))
         .collect();
-    let init = InitializingTile {};
-    let mut board = vec![vec![init; width]; height];
+    let init = Mine {x: -1, y: -1};
+    let mut board: Vec<Vec<Mine>> = vec![vec![init; width as usize]; height as usize];
+    mine_coords
+        .iter()
+        .for_each(|(x, y)| board[*x as usize][*y as usize] = Mine{
+            x: *x,
+            y: *y
+        });
 }
