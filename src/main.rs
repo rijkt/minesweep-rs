@@ -2,7 +2,8 @@ use rand::prelude::*;
 use std::{collections::HashSet, vec};
 
 fn main() {
-    gen_board(10, 10, 10)
+    let board = gen_board(10, 10, 10);
+    assert_eq!(board.len(), 10)
 }
 
 struct Tile {
@@ -21,16 +22,16 @@ impl Clone for Tile {
     }
 }
 
-fn gen_board(width: i32, height: i32, mines: i32) {
+fn gen_board(width: i32, height: i32, mines: i32) -> Vec<Tile> {
     let mine_coords = gen_mine_positions(width, height, mines);
-    let mut board: Vec<Vec<Tile>> = vec![Vec::with_capacity(width as usize); height as usize];
-    mine_coords.iter().for_each(|pos| {
-        board[pos.0 as usize][pos.1 as usize] = Tile {
-            pos: *pos,
-            is_mine: mine_coords.contains(pos),
-            mine_neighbors: 0, // TODO
-        }
-    });
+    (0..width)
+        .zip(0..height) // TODO: permutate
+        .map(|(x, y)| Tile {
+            pos: (x, y),
+            is_mine: mine_coords.contains(&(x, y)),
+            mine_neighbors: 0,
+        })
+        .collect() // TOOD: chunk
 }
 
 fn gen_mine_positions(width: i32, height: i32, mines: i32) -> HashSet<(i32, i32)> {
