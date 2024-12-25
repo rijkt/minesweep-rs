@@ -1,5 +1,6 @@
+use itertools::Itertools;
 use rand::prelude::*;
-use std::{collections::HashSet, vec};
+use std::collections::HashSet;
 
 fn main() {
     let board = gen_board(10, 10, 10);
@@ -12,20 +13,10 @@ struct Tile {
     pub mine_neighbors: u8,
 }
 
-impl Clone for Tile {
-    fn clone(&self) -> Self {
-        Tile {
-            pos: self.pos,
-            is_mine: self.is_mine,
-            mine_neighbors: self.mine_neighbors,
-        }
-    }
-}
-
 fn gen_board(width: i32, height: i32, mines: i32) -> Vec<Tile> {
     let mine_coords = gen_mine_positions(width, height, mines);
     (0..width)
-        .zip(0..height) // TODO: permutate
+        .cartesian_product(0..height)
         .map(|(x, y)| Tile {
             pos: (x, y),
             is_mine: mine_coords.contains(&(x, y)),
