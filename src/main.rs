@@ -25,7 +25,7 @@ struct Mine {
 struct NumberTile {
     pub x: i32,
     pub y: i32,
-    pub mine_neighbors: i32,
+    pub mine_neighbors: u8,
 }
 
 impl Checkable for Mine {
@@ -40,11 +40,25 @@ impl Checkable for NumberTile {
     }
 }
 
-fn gen_board(width: i32, height: i32, mines: i32) {
-    let mut rng = rand::thread_rng();
+struct InitializingTile {}
 
-    let points: HashSet<(i32, i32)> = (0..mines)
+impl Checkable for InitializingTile {
+    fn check(&self) -> CheckResult {
+        panic!("Encountered initializing tile")
+    }
+}
+
+impl Clone for InitializingTile {
+    fn clone(&self) -> Self {
+        InitializingTile {}
+    }
+}
+
+fn gen_board(width: usize, height: usize, mines: i32) {
+    let mut rng = rand::thread_rng();
+    let mine_coords: HashSet<(usize, usize)> = (0..mines)
         .map(|_| (rng.gen_range(0..=width), rng.gen_range(0..=height)))
         .collect();
-    print!("{:?}", points)
+    let init = InitializingTile {};
+    let mut board = vec![vec![init; width]; height];
 }
