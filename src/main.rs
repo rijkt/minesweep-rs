@@ -2,6 +2,7 @@ use itertools::Itertools;
 use rand::prelude::*;
 use std::{
     collections::{HashMap, HashSet},
+    f64,
     fmt::Debug,
 };
 
@@ -54,9 +55,23 @@ fn count_neighbors(
 ) -> HashMap<(i32, i32), u8> {
     (0..max_x)
         .cartesian_product(0..max_y)
-        .unique()
-        .map(|(x, y)| ((x, y), 0))
+        .map(|pos| {
+            (
+                pos,
+                mine_pos
+                    .iter()
+                    .map(|mine_pos| distance(pos, *mine_pos))
+                    .filter(|d| *d == 1)
+                    .count() as u8,
+            )
+        })
         .collect()
+}
+
+fn distance(v1: (i32, i32), v2: (i32, i32)) -> u8 {
+    let d1 = (v2.0 - v1.0) as f64;
+    let d2 = (v2.1 - v1.1) as f64;
+    (d1.powi(2) + d2.powi(2)).sqrt() as u8 // we only care about integers
 }
 
 fn gen_mine_positions(max_x: i32, max_y: i32, mines: i32) -> HashSet<(i32, i32)> {
