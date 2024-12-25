@@ -3,7 +3,7 @@ use std::{collections::HashSet, vec};
 
 fn main() {
     let board = gen_board(10, 10, 10);
-    assert_eq!(board.len(), 10)
+    assert_eq!(board.len(), 100)
 }
 
 struct Tile {
