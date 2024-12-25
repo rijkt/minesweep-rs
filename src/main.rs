@@ -66,7 +66,7 @@ impl Clone for InitializingTile {
 fn gen_board(width: i32, height: i32, mines: i32) {
     let mut rng = rand::thread_rng();
     let mine_coords: HashSet<(i32, i32)> = (0..mines)
-        .map(|_| (rng.gen_range(0..=width), rng.gen_range(0..=height)))
+        .map(|_| (rng.gen_range(0..width), rng.gen_range(0..height)))
         .collect();
     let init = Mine {x: -1, y: -1};
     let mut board: Vec<Vec<Mine>> = vec![vec![init; width as usize]; height as usize];
