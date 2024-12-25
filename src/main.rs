@@ -22,16 +22,20 @@ impl Clone for Tile {
 }
 
 fn gen_board(width: i32, height: i32, mines: i32) {
-    let mut rng = rand::thread_rng();
-    let mine_coords: HashSet<(i32, i32)> = (0..mines)
-        .map(|_| (rng.gen_range(0..width), rng.gen_range(0..height)))
-        .collect();
+    let mine_coords = gen_mine_positions(width, height, mines);
     let mut board: Vec<Vec<Tile>> = vec![Vec::with_capacity(width as usize); height as usize];
-    mine_coords.iter().for_each(|(x, y)| {
-        board[*x as usize][*y as usize] = Tile {
-            pos: (*x, *y),
-            is_mine: true,
+    mine_coords.iter().for_each(|pos| {
+        board[pos.0 as usize][pos.1 as usize] = Tile {
+            pos: *pos,
+            is_mine: mine_coords.contains(pos),
             mine_neighbors: 0, // TODO
         }
     });
+}
+
+fn gen_mine_positions(width: i32, height: i32, mines: i32) -> HashSet<(i32, i32)> {
+    let mut rng = rand::thread_rng();
+    (0..mines)
+        .map(|_| (rng.gen_range(0..width), rng.gen_range(0..height)))
+        .collect() // deduplicate by putting into Set. TODO: generate more on duplicates.
 }
