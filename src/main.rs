@@ -76,13 +76,53 @@ impl Reveal for Controller {
 }
 
 fn render(state: GameState) -> () {
-    let view = state.board_view.iter()
-    .map(|row| row.iter().map(|tile| match tile {
-        PlayTile { mine: true, flagged: _, revealed: true, mine_neighbors: _} => "💣",
-        PlayTile { mine: false, flagged: _, revealed: true, mine_neighbors: num} => " ", // TODO match number
-        PlayTile { mine: _, flagged: false, revealed: false, mine_neighbors: _} => "❓",
-        PlayTile { mine: _, flagged: true, revealed: false, mine_neighbors: _} => "🚩",
-    }).join("|")
-).join("\n");
+    let view = state
+        .board_view
+        .iter()
+        .map(|row| {
+            row.iter()
+                .map(|tile| render_tile(tile))
+                .join("|")
+        })
+        .join("\n");
     println!("{}", view);
+}
+
+fn render_tile(tile: &PlayTile) -> &str {
+    match tile {
+        PlayTile {
+            mine: true,
+            flagged: _,
+            revealed: true,
+            mine_neighbors: _,
+        } => "💣",
+        PlayTile {
+            mine: false,
+            flagged: _,
+            revealed: true,
+            mine_neighbors: num,
+        } => match num {
+            1 => "1️⃣",
+            2 => "2️⃣",
+            3 => "3️⃣",
+            4 => "4️⃣",
+            5 => "5️⃣",
+            6 => "6️⃣",
+            7 => "7️⃣",
+            8 => "8️⃣",
+            _ => panic!("Encountered invalid neighbor count {}", num),
+        },
+        PlayTile {
+            mine: _,
+            flagged: false,
+            revealed: false,
+            mine_neighbors: _,
+        } => "❓",
+        PlayTile {
+            mine: _,
+            flagged: true,
+            revealed: false,
+            mine_neighbors: _,
+        } => "🚩",
+    }
 }
