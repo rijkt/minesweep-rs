@@ -112,6 +112,7 @@ fn render_tile(tile: &PlayTile) -> &str {
             revealed: true,
             mine_neighbors: num,
         } => match num {
+            0 => "⬜",
             1 => "1️⃣",
             2 => "2️⃣",
             3 => "3️⃣",
