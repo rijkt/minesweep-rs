@@ -7,7 +7,8 @@ fn main() {
     let mut controller = Controller::new();
     println!("{:?}", controller.board);
     render(&controller.state);
-    let revealed = controller.reveal((5, 5));
+    let revealed = controller.reveal((3, 4));
+    println!("-----");
     render(&revealed);
 }
 
@@ -57,10 +58,12 @@ struct Controller {
 
 impl Controller {
     fn new() -> Self {
+        let width = 7;
+        let height = 5;
         Self {
-            board: gen_board(10, 10, 10), // TODO: parameterize
+            board: gen_board(width, height, 10), // TODO: parameterize
             state: GameState {
-                board_view: vec![vec![PlayTile::hidden(); 10]; 10],
+                board_view: vec![vec![PlayTile::hidden(); width as usize]; height as usize],
                 exploded: false,
             },
         }
