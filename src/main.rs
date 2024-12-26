@@ -1,17 +1,19 @@
 use board::{gen_board, Tile};
+use itertools::Itertools;
 
 mod board;
 
 fn main() {
     let controller = Controller::new();
     assert_eq!(controller.board.len(), 100);
-    println!("{:?}", controller.board)
+    println!("{:?}", controller.board);
+    render(controller.state);
 }
 
 struct PlayTile {
     flagged: bool,
     revealed: bool,
-    mine_neighbors: Option<u8>,
+    mine_neighbors: u8,
     mine: bool,
 }
 
@@ -21,7 +23,7 @@ impl PlayTile {
             flagged: false,
             revealed: false,
             mine: false,
-            mine_neighbors: None,
+            mine_neighbors: 0,
         }
     }
 }
@@ -74,5 +76,13 @@ impl Reveal for Controller {
 }
 
 fn render(state: GameState) -> () {
-    println!()
+    let view = state.board_view.iter()
+    .map(|row| row.iter().map(|tile| match tile {
+        PlayTile { mine: true, flagged: _, revealed: true, mine_neighbors: _} => "💣",
+        PlayTile { mine: false, flagged: _, revealed: true, mine_neighbors: num} => " ", // TODO match number
+        PlayTile { mine: _, flagged: false, revealed: false, mine_neighbors: _} => "❓",
+        PlayTile { mine: _, flagged: true, revealed: false, mine_neighbors: _} => "🚩",
+    }).join("|")
+).join("\n");
+    println!("{}", view);
 }
