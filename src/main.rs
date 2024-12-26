@@ -45,11 +45,11 @@ struct GameState {
 }
 
 trait Reveal {
-    fn reveal(&self, pos: (i32, i32)) -> GameState;
+    fn reveal(&mut self, pos: (i32, i32)) -> GameState; // TODO make immutable
 }
 
 struct Controller {
-    board: Vec<Tile>,
+    board: Vec<Vec<Tile>>,
     state: GameState, // TODO: timer
                       // TODO: renderer
 }
@@ -67,10 +67,19 @@ impl Controller {
 }
 
 impl Reveal for Controller {
-    fn reveal(&self, pos: (i32, i32)) -> GameState {
+    fn reveal(&mut self, pos: (i32, i32)) -> GameState {
+        let x = pos.0 as usize;
+        let y = pos.1 as usize;
+        let board_tile = &self.board[x][y];
+        self.state.board_view[x][y] = PlayTile{
+            flagged: false, // TODO
+            revealed: true,
+            mine_neighbors: board_tile.mine_neighbors,
+            mine: board_tile.is_mine,
+        };
         GameState {
             board_view: todo!(),
-            exploded: todo!(),
+            exploded: board_tile.is_mine,
         }
     }
 }

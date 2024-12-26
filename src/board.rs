@@ -20,7 +20,7 @@ impl Debug for Tile {
     }
 }
 
-pub(crate) fn gen_board(width: i32, height: i32, mines: i32) -> Vec<Tile> {
+pub(crate) fn gen_board(width: i32, height: i32, mines: i32) -> Vec<Vec<Tile>> {
     let mine_generation = gen_mines(width, height, mines);
     let mine_pos = mine_generation.0;
     let mine_count = mine_generation.1;
@@ -31,7 +31,10 @@ pub(crate) fn gen_board(width: i32, height: i32, mines: i32) -> Vec<Tile> {
             is_mine: mine_pos.contains(&(x, y)),
             mine_neighbors: *mine_count.get(&(x, y)).unwrap(),
         })
-        .collect() // TOOD: chunk
+        .chunks(width as usize)
+        .into_iter()
+        .map(|chunk| chunk.collect::<Vec<Tile>>())
+        .collect()
 }
 
 fn gen_mines(max_x: i32, max_y: i32, mines: i32) -> (HashSet<(i32, i32)>, HashMap<(i32, i32), u8>) {
