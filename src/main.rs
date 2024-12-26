@@ -4,10 +4,11 @@ use itertools::Itertools;
 mod board;
 
 fn main() {
-    let controller = Controller::new();
-    assert_eq!(controller.board.len(), 100);
+    let mut controller = Controller::new();
     println!("{:?}", controller.board);
-    render(controller.state);
+    render(&controller.state);
+    let revealed = controller.reveal((5, 5));
+    render(&revealed);
 }
 
 struct PlayTile {
@@ -84,7 +85,7 @@ impl Reveal for Controller {
     }
 }
 
-fn render(state: GameState) -> () {
+fn render(state: &GameState) -> () {
     let view = state
         .board_view
         .iter()
