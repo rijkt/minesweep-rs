@@ -1,15 +1,17 @@
 use board::{gen_board, Tile};
-use itertools::Itertools;
+use render::{ConsoleRenderer, Render};
 
 mod board;
+mod render;
 
 fn main() {
     let mut controller = Controller::new();
     println!("{:?}", controller.board);
-    render(&controller.state);
+    let renderer = ConsoleRenderer {};
+    renderer.render(&controller.state);
     let revealed = controller.reveal((3, 4));
     println!("-----");
-    render(&revealed);
+    renderer.render(&revealed);
 }
 
 struct PlayTile {
@@ -53,7 +55,6 @@ trait Reveal {
 struct Controller {
     board: Vec<Vec<Tile>>,
     state: GameState, // TODO: timer
-                      // TODO: renderer
 }
 
 impl Controller {
@@ -75,7 +76,7 @@ impl Reveal for Controller {
         let x = pos.0 as usize;
         let y = pos.1 as usize;
         let board_tile = &self.board[x][y];
-        self.state.board_view[x][y] = PlayTile{
+        self.state.board_view[x][y] = PlayTile {
             flagged: false, // TODO
             revealed: true,
             mine_neighbors: board_tile.mine_neighbors,
@@ -85,58 +86,5 @@ impl Reveal for Controller {
             board_view: self.state.board_view.clone(),
             exploded: board_tile.is_mine,
         }
-    }
-}
-
-fn render(state: &GameState) -> () {
-    let view = state
-        .board_view
-        .iter()
-        .map(|row| {
-            row.iter()
-                .map(|tile| render_tile(tile))
-                .join("|")
-        })
-        .join("\n");
-    println!("{}", view);
-}
-
-fn render_tile(tile: &PlayTile) -> &str {
-    match tile {
-        PlayTile {
-            mine: true,
-            flagged: _,
-            revealed: true,
-            mine_neighbors: _,
-        } => "💣",
-        PlayTile {
-            mine: false,
-            flagged: _,
-            revealed: true,
-            mine_neighbors: num,
-        } => match num {
-            0 => "⬜",
-            1 => "1️⃣",
-            2 => "2️⃣",
-            3 => "3️⃣",
-            4 => "4️⃣",
-            5 => "5️⃣",
-            6 => "6️⃣",
-            7 => "7️⃣",
-            8 => "8️⃣",
-            _ => panic!("Encountered invalid neighbor count {}", num),
-        },
-        PlayTile {
-            mine: _,
-            flagged: false,
-            revealed: false,
-            mine_neighbors: _,
-        } => "❓",
-        PlayTile {
-            mine: _,
-            flagged: true,
-            revealed: false,
-            mine_neighbors: _,
-        } => "🚩",
     }
 }
