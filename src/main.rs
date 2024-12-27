@@ -1,4 +1,4 @@
-use board::{gen_board, Tile};
+use board::{gen_board, BoardTile};
 use render::{ConsoleRenderer, Render};
 
 mod board;
@@ -53,7 +53,7 @@ trait Reveal {
 }
 
 struct Controller {
-    board: Vec<Vec<Tile>>,
+    board: Vec<Vec<BoardTile>>,
     state: GameState, // TODO: timer
 }
 
