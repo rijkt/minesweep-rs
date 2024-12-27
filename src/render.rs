@@ -1,15 +1,16 @@
-use super::GameState;
-use super::PlayTile;
+use crate::controller;
+
+use super::controller::PlayTile;
 use itertools::Itertools;
 
 pub(crate) trait Render {
-    fn render(&self, state: &GameState) -> ();
+    fn render(&self, state: &controller::GameState) -> ();
 }
 
 pub(crate) struct ConsoleRenderer {}
 
 impl Render for ConsoleRenderer {
-    fn render(&self, state: &GameState) -> () {
+    fn render(&self, state: &controller::GameState) -> () {
         let view = state
             .board_view
             .iter()
