@@ -61,8 +61,8 @@ impl Reveal for Controller {
     fn reveal(&mut self, pos: (i32, i32)) -> GameState {
         let x = pos.0 as usize;
         let y = pos.1 as usize;
-        let board_tile = &self.board[x][y];
-        self.state.board_view[x][y] = PlayTile {
+        let board_tile = &self.board[y][x];
+        self.state.board_view[y][x] = PlayTile {
             flagged: false, // TODO
             revealed: true,
             mine_neighbors: board_tile.mine_neighbors,
