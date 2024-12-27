@@ -26,6 +26,7 @@ pub(crate) fn gen_board(width: i32, height: i32, mines: i32) -> Vec<Vec<BoardTil
     let mine_count = mine_generation.1;
     (0..width)
         .cartesian_product(0..height)
+        .sorted_by(|x, y| x.1.cmp(&y.1)) // column-wise
         .map(|(x, y)| BoardTile {
             pos: (x, y),
             is_mine: mine_pos.contains(&(x, y)),
