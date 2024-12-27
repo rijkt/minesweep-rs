@@ -1,4 +1,5 @@
 use controller::{Controller, Reveal};
+use rand::Rng;
 use render::{ConsoleRenderer, Render};
 mod board;
 mod controller;
@@ -7,8 +8,13 @@ mod render;
 fn main() {
     let mut controller = Controller::new();
     let renderer = ConsoleRenderer {};
+    let mut rng = rand::thread_rng();
+
     renderer.render(&controller.state);
-    let revealed = controller.reveal((3, 4));
-    println!("-----");
-    renderer.render(&revealed);
+    while !controller.state.exploded {
+        println!();
+        let pos = (rng.gen_range(0..7), rng.gen_range(0..5));
+        let revealed = controller.reveal(pos);
+        renderer.render(&revealed);
+    }
 }
