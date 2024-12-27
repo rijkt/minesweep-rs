@@ -4,13 +4,13 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt::Debug;
 
-pub(crate) struct Tile {
+pub(crate) struct BoardTile {
     pub pos: (i32, i32),
     pub is_mine: bool,
     pub mine_neighbors: u8,
 }
 
-impl Debug for Tile {
+impl Debug for BoardTile {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Tile")
             .field("pos", &self.pos)
@@ -20,18 +20,21 @@ impl Debug for Tile {
     }
 }
 
-pub(crate) fn gen_board(width: i32, height: i32, mines: i32) -> Vec<Tile> {
+pub(crate) fn gen_board(width: i32, height: i32, mines: i32) -> Vec<Vec<BoardTile>> {
     let mine_generation = gen_mines(width, height, mines);
     let mine_pos = mine_generation.0;
     let mine_count = mine_generation.1;
     (0..width)
         .cartesian_product(0..height)
-        .map(|(x, y)| Tile {
+        .map(|(x, y)| BoardTile {
             pos: (x, y),
             is_mine: mine_pos.contains(&(x, y)),
             mine_neighbors: *mine_count.get(&(x, y)).unwrap(),
         })
-        .collect() // TOOD: chunk
+        .chunks(width as usize)
+        .into_iter()
+        .map(|chunk| chunk.collect::<Vec<BoardTile>>())
+        .collect()
 }
 
 fn gen_mines(max_x: i32, max_y: i32, mines: i32) -> (HashSet<(i32, i32)>, HashMap<(i32, i32), u8>) {

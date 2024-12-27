@@ -1,7 +1,14 @@
+use controller::{Controller, Reveal};
+use render::{ConsoleRenderer, Render};
 mod board;
+mod controller;
+mod render;
 
 fn main() {
-    let board = board::gen_board(10, 10, 10);
-    assert_eq!(board.len(), 100);
-    println!("{:?}", board)
+    let mut controller = Controller::new();
+    let renderer = ConsoleRenderer {};
+    renderer.render(&controller.state);
+    let revealed = controller.reveal((3, 4));
+    println!("-----");
+    renderer.render(&revealed);
 }
