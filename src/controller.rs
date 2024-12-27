@@ -68,6 +68,7 @@ impl Reveal for Controller {
             mine_neighbors: board_tile.mine_neighbors,
             mine: board_tile.is_mine,
         };
+        self.state.exploded = board_tile.is_mine;
         GameState {
             board_view: self.state.board_view.clone(),
             exploded: board_tile.is_mine,
