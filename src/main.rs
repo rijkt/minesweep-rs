@@ -12,7 +12,6 @@ fn main() {
 
     renderer.render(&controller.state);
     while !controller.state.exploded {
-        println!();
         let pos = (rng.gen_range(0..7), rng.gen_range(0..5));
         let revealed = controller.reveal(pos);
         renderer.render(&revealed);
