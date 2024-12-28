@@ -61,14 +61,14 @@ fn render_tile(tile: &PlayTile) -> &str {
 fn render_number_tile(num: &u8) -> &str {
     match num {
         0 => "⬜",
-        1 => "1️⃣",
-        2 => "2️⃣",
-        3 => "3️⃣",
-        4 => "4️⃣",
-        5 => "5️⃣",
-        6 => "6️⃣",
-        7 => "7️⃣",
-        8 => "8️⃣",
+        1 => "1",
+        2 => "2",
+        3 => "3",
+        4 => "4",
+        5 => "5",
+        6 => "6",
+        7 => "7",
+        8 => "8",
         _ => panic!("Encountered invalid neighbor count {}", num),
     }
 }
