@@ -1,7 +1,10 @@
 use crate::controller;
 
 use super::controller::PlayTile;
-use itertools::Itertools;
+use tabled::{
+    settings::{object::Rows, Border, Style},
+    Table,
+};
 
 pub(crate) trait Render {
     fn render(&self, state: &controller::GameState) -> ();
@@ -11,12 +14,18 @@ pub(crate) struct ConsoleRenderer {}
 
 impl Render for ConsoleRenderer {
     fn render(&self, state: &controller::GameState) -> () {
-        let view = state
+        let view: Vec<Vec<&str>> = state
             .board_view
             .iter()
-            .map(|row| row.iter().map(|tile| render_tile(tile)).join("|"))
-            .join("\n");
-        println!("{}", view);
+            .map(|row| row.iter().map(|tile| render_tile(tile)).collect())
+            .collect();
+        let mut table = Table::from_iter(view);
+        table.with(Style::ascii());
+        table.modify(
+            Rows::first(),
+            Border::inherit(Style::ascii())
+        );
+        println!("{}", table);
     }
 }
 
