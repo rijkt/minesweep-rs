@@ -44,9 +44,7 @@ pub(crate) struct Controller {
 }
 
 impl Controller {
-    pub(crate) fn new() -> Self {
-        let width = 7;
-        let height = 5;
+    pub(crate) fn new(width: i32, height: i32) -> Self {
         Self {
             board: gen_board(width, height, 10), // TODO: parameterize
             state: GameState {
