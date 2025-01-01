@@ -82,10 +82,23 @@ impl Controller {
             exploded: board_tile.is_mine,
         }
     }
+
+    fn process_single(&mut self, request: ControllerRequest) -> () {
+        match request.req_type {
+            RequestType::REVEAL => {
+                self.reveal(request.pos);
+            }
+            RequestType::REVEAL_AROUND => todo!(),
+            RequestType::FLAG => todo!(),
+            RequestType::UN_FLAG => todo!(),
+        }
+    }
 }
 
 impl Process for Controller {
     fn process(&mut self, requests: Vec<ControllerRequest>) -> () {
-        self.reveal(requests[0].pos);
+        requests.into_iter().for_each(|req| {
+            self.process_single(req);
+        });
     }
 }
