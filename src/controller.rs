@@ -32,6 +32,8 @@ impl Clone for PlayTile {
 pub(crate) struct GameState {
     pub(crate) board_view: Vec<Vec<PlayTile>>,
     pub(crate) exploded: bool, // maybe moves/history
+    pub (crate) width: i32, 
+    pub (crate) height: i32,
 }
 
 pub(crate) trait Process {
@@ -62,6 +64,8 @@ impl Controller {
             state: GameState {
                 board_view: vec![vec![PlayTile::hidden(); width as usize]; height as usize],
                 exploded: false,
+                width,
+                height
             },
         }
     }
@@ -80,6 +84,8 @@ impl Controller {
         GameState {
             board_view: self.state.board_view.clone(),
             exploded: board_tile.is_mine,
+            width: self.state.width,
+            height: self.state.height,
         }
     }
 
