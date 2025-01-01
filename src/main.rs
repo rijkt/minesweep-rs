@@ -1,5 +1,4 @@
 use controller::{Controller, Process};
-use rand::Rng;
 use render::{ConsoleRenderer, Render};
 use solver::{PlayerSolver, Solve};
 mod board;
@@ -11,8 +10,7 @@ fn main() {
     let height = 5;
     let mut controller = Controller::new(width, height);
     let renderer = ConsoleRenderer {};
-    let mut rng = rand::thread_rng();
-    let mut solver = PlayerSolver {};
+    let mut solver = PlayerSolver{};
 
     renderer.render(&controller.state);
     while !controller.state.exploded {
@@ -23,9 +21,9 @@ fn main() {
 }
 
 mod solver {
-    use std::io;
-
     use crate::controller::{ControllerRequest, GameState, RequestType};
+    use rand::Rng;
+    use std::io;
 
     pub(crate) trait Solve {
         fn solve(&mut self, game_state: &GameState) -> Vec<ControllerRequest>;
@@ -69,8 +67,27 @@ mod solver {
             (numbers[0], numbers[1])
         }
     }
-}
 
-fn get_random_pos(width: i32, height: i32, rng: &mut rand::prelude::ThreadRng) -> (i32, i32) {
-    (rng.gen_range(0..width), rng.gen_range(0..height))
+    pub(crate) struct RandomSolver {
+        rng: rand::prelude::ThreadRng,
+    }
+    
+    impl RandomSolver {
+        pub(crate) fn new(rng: rand::prelude::ThreadRng) -> Self {
+        Self { rng }
+    }
+    }
+
+    impl Solve for RandomSolver {
+        fn solve(&mut self, game_state: &GameState) -> Vec<ControllerRequest> {
+            vec![ControllerRequest {
+                req_type: RequestType::REVEAL,
+                pos: get_random_pos(game_state.width, game_state.height, &mut self.rng),
+            }]
+        }
+    }
+
+    fn get_random_pos(width: i32, height: i32, rng: &mut rand::prelude::ThreadRng) -> (i32, i32) {
+        (rng.gen_range(0..width), rng.gen_range(0..height))
+    }
 }
