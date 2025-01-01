@@ -32,10 +32,24 @@ impl Clone for PlayTile {
 pub(crate) struct GameState {
     pub(crate) board_view: Vec<Vec<PlayTile>>,
     pub(crate) exploded: bool, // maybe moves/history
+    pub (crate) width: i32, 
+    pub (crate) height: i32,
 }
 
-pub(crate) trait Reveal {
-    fn reveal(&mut self, pos: (i32, i32)) -> GameState; // TODO make immutable
+pub(crate) trait Process {
+    fn process(&mut self, requests: Vec<ControllerRequest>) -> ();
+}
+
+pub(crate) enum RequestType {
+    REVEAL,
+    REVEAL_AROUND,
+    FLAG,
+    UN_FLAG,
+}
+
+pub(crate) struct ControllerRequest {
+    pub(crate) req_type: RequestType,
+    pub(crate) pos: (i32, i32),
 }
 
 pub(crate) struct Controller {
@@ -44,21 +58,19 @@ pub(crate) struct Controller {
 }
 
 impl Controller {
-    pub(crate) fn new() -> Self {
-        let width = 7;
-        let height = 5;
+    pub(crate) fn new(width: i32, height: i32) -> Self {
         Self {
             board: gen_board(width, height, 10), // TODO: parameterize
             state: GameState {
                 board_view: vec![vec![PlayTile::hidden(); width as usize]; height as usize],
                 exploded: false,
+                width,
+                height
             },
         }
     }
-}
 
-impl Reveal for Controller {
-    fn reveal(&mut self, pos: (i32, i32)) -> GameState {
+    fn reveal(&mut self, pos: (i32, i32)) -> GameState { // TODO make immutable
         let x = pos.0 as usize;
         let y = pos.1 as usize;
         let board_tile = &self.board[y][x];
@@ -72,6 +84,27 @@ impl Reveal for Controller {
         GameState {
             board_view: self.state.board_view.clone(),
             exploded: board_tile.is_mine,
+            width: self.state.width,
+            height: self.state.height,
         }
+    }
+
+    fn process_single(&mut self, request: ControllerRequest) -> () {
+        match request.req_type {
+            RequestType::REVEAL => {
+                self.reveal(request.pos);
+            }
+            RequestType::REVEAL_AROUND => todo!(),
+            RequestType::FLAG => todo!(),
+            RequestType::UN_FLAG => todo!(),
+        }
+    }
+}
+
+impl Process for Controller {
+    fn process(&mut self, requests: Vec<ControllerRequest>) -> () {
+        requests.into_iter().for_each(|req| {
+            self.process_single(req);
+        });
     }
 }

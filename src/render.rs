@@ -14,6 +14,7 @@ pub(crate) struct ConsoleRenderer {}
 
 impl Render for ConsoleRenderer {
     fn render(&self, state: &controller::GameState) -> () {
+        println!();
         let view: Vec<Vec<&str>> = state
             .board_view
             .iter()
