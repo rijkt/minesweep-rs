@@ -1,4 +1,4 @@
-use controller::{Controller, Reveal};
+use controller::{Controller, ControllerRequest, Process, RequestType};
 use rand::Rng;
 use render::{ConsoleRenderer, Render};
 use std::io;
@@ -16,8 +16,9 @@ fn main() {
     renderer.render(&controller.state);
     while !controller.state.exploded {
         let pos = parse_input(width, height);
-        let revealed = controller.reveal(pos);
-        renderer.render(&revealed);
+        let req: Vec<ControllerRequest> = vec![ControllerRequest{ req_type: RequestType::REVEAL, pos }];
+        controller.process(req);
+        renderer.render(&controller.state);
     }
 }
 
