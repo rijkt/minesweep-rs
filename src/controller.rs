@@ -1,36 +1,9 @@
 use crate::board::{gen_board, BoardTile};
 
-pub(crate) struct PlayTile {
-    pub(crate) flagged: bool,
-    pub(crate) revealed: bool,
-    pub(crate) mine_neighbors: u8,
-    pub(crate) mine: bool,
-}
-
-impl PlayTile {
-    pub(crate) fn hidden() -> Self {
-        Self {
-            flagged: false,
-            revealed: false,
-            mine: false,
-            mine_neighbors: 0,
-        }
-    }
-}
-
-impl Clone for PlayTile {
-    fn clone(&self) -> Self {
-        Self {
-            flagged: self.flagged.clone(),
-            revealed: self.revealed.clone(),
-            mine_neighbors: self.mine_neighbors.clone(),
-            mine: self.mine.clone(),
-        }
-    }
-}
+pub mod play_tile;
 
 pub(crate) struct GameState {
-    pub(crate) board_view: Vec<Vec<PlayTile>>,
+    pub(crate) board_view: Vec<Vec<play_tile::PlayTile>>,
     pub(crate) exploded: bool, // maybe moves/history
     pub (crate) width: i32, 
     pub (crate) height: i32,
@@ -62,7 +35,7 @@ impl Controller {
         Self {
             board: gen_board(width, height, 10), // TODO: parameterize
             state: GameState {
-                board_view: vec![vec![PlayTile::hidden(); width as usize]; height as usize],
+                board_view: vec![vec![play_tile::PlayTile::hidden(); width as usize]; height as usize],
                 exploded: false,
                 width,
                 height
@@ -74,7 +47,7 @@ impl Controller {
         let x = pos.0 as usize;
         let y = pos.1 as usize;
         let board_tile = &self.board[y][x];
-        self.state.board_view[y][x] = PlayTile {
+        self.state.board_view[y][x] = play_tile::PlayTile {
             flagged: false, // TODO
             revealed: true,
             mine_neighbors: board_tile.mine_neighbors,

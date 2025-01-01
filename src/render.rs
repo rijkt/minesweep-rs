@@ -1,6 +1,5 @@
-use crate::controller;
+use crate::controller::{self, play_tile};
 
-use super::controller::PlayTile;
 use tabled::{
     settings::{object::Rows, Border, Style},
     Table,
@@ -30,27 +29,27 @@ impl Render for ConsoleRenderer {
     }
 }
 
-fn render_tile(tile: &PlayTile) -> &str {
+fn render_tile(tile: &play_tile::PlayTile) -> &str {
     match tile {
-        PlayTile {
+        play_tile::PlayTile {
             mine: true,
             flagged: _,
             revealed: true,
             mine_neighbors: _,
         } => "💣",
-        PlayTile {
+        play_tile::PlayTile {
             mine: false,
             flagged: _,
             revealed: true,
             mine_neighbors: num,
         } => render_number_tile(num),
-        PlayTile {
+        play_tile::PlayTile {
             mine: _,
             flagged: false,
             revealed: false,
             mine_neighbors: _,
         } => "❓",
-        PlayTile {
+        play_tile::PlayTile {
             mine: _,
             flagged: true,
             revealed: false,
