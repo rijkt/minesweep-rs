@@ -3,6 +3,7 @@ use rand::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt::Debug;
+use std::iter::from_fn;
 
 pub(crate) struct BoardTile {
     pub pos: (i32, i32),
@@ -39,7 +40,11 @@ pub(crate) fn gen_board(width: i32, height: i32, mines: i32) -> Vec<Vec<BoardTil
 }
 
 fn gen_mines(max_x: i32, max_y: i32, mines: i32) -> (HashSet<(i32, i32)>, HashMap<(i32, i32), u8>) {
-    let mine_pos = gen_mine_positions(max_x, max_y, mines);
+    let mine_pos: HashSet<(i32, i32)> = gen_rnd_positions(max_x, max_y)
+        .unique()
+        .take(mines as usize)
+        .collect();
+    assert_eq!(mine_pos.len(), mines as usize);
     let neighbors = count_neighbors(mine_pos.clone(), max_x, max_y);
     (mine_pos, neighbors)
 }
@@ -70,9 +75,7 @@ fn distance(v1: (i32, i32), v2: (i32, i32)) -> u8 {
     (d1.powi(2) + d2.powi(2)).sqrt() as u8 // we only care about integers
 }
 
-fn gen_mine_positions(max_x: i32, max_y: i32, mines: i32) -> HashSet<(i32, i32)> {
+fn gen_rnd_positions(max_x: i32, max_y: i32) -> impl Iterator<Item = (i32, i32)> {
     let mut rng = rand::thread_rng();
-    (0..mines)
-        .map(|_| (rng.gen_range(0..max_x), rng.gen_range(0..max_y)))
-        .collect() // deduplicate by putting into Set. TODO: generate more on duplicates.
+    from_fn(move || Some((rng.gen_range(0..max_x), rng.gen_range(0..max_y))))
 }
