@@ -21,6 +21,16 @@ pub(crate) trait Process {
     fn process(&mut self, requests: Vec<ControllerRequest>) -> ();
 }
 
+pub(crate) enum GameResult {
+    WIN,
+    LOSE,
+    IN_PROGRESS
+}
+
+pub(crate) trait CheckGameResult {
+    fn check_result(&self) -> GameResult;
+}
+
 pub(crate) enum RequestType {
     REVEAL,
     REVEAL_AROUND,

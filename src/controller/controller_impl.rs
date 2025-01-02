@@ -1,10 +1,12 @@
+use super::CheckGameResult;
+use super::Controller;
+use super::ControllerRequest;
+use super::GameResult;
+use super::GameState;
 use super::PlayTile;
 use super::Process;
 use super::RequestType;
-use super::ControllerRequest;
-use super::GameState;
 use crate::board::gen_board;
-use super::Controller;
 
 impl Controller {
     pub(crate) fn new(width: i32, height: i32, mines: i32) -> Self {
@@ -15,12 +17,13 @@ impl Controller {
                 exploded: false,
                 width,
                 height,
-                mines
+                mines,
             },
         }
     }
 
-    fn reveal(&mut self, pos: (i32, i32)) -> GameState { // TODO make immutable
+    fn reveal(&mut self, pos: (i32, i32)) -> GameState {
+        // TODO make immutable
         let x = pos.0 as usize;
         let y = pos.1 as usize;
         let board_tile = &self.board[y][x];
@@ -37,7 +40,7 @@ impl Controller {
             exploded: board_tile.is_mine,
             width: state.width,
             height: state.height,
-            mines: state.mines
+            mines: state.mines,
         }
     }
 
@@ -58,5 +61,15 @@ impl Process for Controller {
         requests.into_iter().for_each(|req| {
             self.process_single(req);
         });
+    }
+}
+
+impl CheckGameResult for Controller {
+    fn check_result(&self) -> super::GameResult {
+        if self.state.exploded {
+            GameResult::LOSE
+        } else {
+            GameResult::IN_PROGRESS
+        }
     }
 }

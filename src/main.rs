@@ -1,4 +1,4 @@
-use controller::{Controller, Process};
+use controller::{CheckGameResult, Controller, GameResult, Process};
 use render::{ConsoleRenderer, Render};
 use solver::{PlayerSolver, Solve};
 mod board;
@@ -14,9 +14,14 @@ fn main() {
     let renderer = ConsoleRenderer {};
     let mut solver = PlayerSolver {};
     renderer.render(&controller.state);
-    while !controller.state.exploded {
+    while matches!(controller.check_result(), GameResult::IN_PROGRESS) {
         let req = solver.solve(&controller.state);
         controller.process(req);
         renderer.render(&controller.state);
+    }
+    match controller.check_result() {
+        GameResult::WIN => println!("You win!"),
+        GameResult::LOSE => println!("You lose.."),
+        _ => panic!("Illegal state"),
     }
 }
