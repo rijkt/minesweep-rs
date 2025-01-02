@@ -1,5 +1,6 @@
 use crate::board::BoardTile;
 mod controller_impl;
+mod play_tile_impl;
 
 pub(crate) struct PlayTile {
     pub(crate) flagged: bool,
@@ -8,33 +9,11 @@ pub(crate) struct PlayTile {
     pub(crate) mine: bool,
 }
 
-impl PlayTile {
-    pub(crate) fn hidden() -> Self {
-        Self {
-            flagged: false,
-            revealed: false,
-            mine: false,
-            mine_neighbors: 0,
-        }
-    }
-}
-
-impl Clone for PlayTile {
-    fn clone(&self) -> Self {
-        Self {
-            flagged: self.flagged.clone(),
-            revealed: self.revealed.clone(),
-            mine_neighbors: self.mine_neighbors.clone(),
-            mine: self.mine.clone(),
-        }
-    }
-}
-
 pub(crate) struct GameState {
     pub(crate) board_view: Vec<Vec<PlayTile>>,
     pub(crate) exploded: bool, // maybe moves/history
-    pub (crate) width: i32, 
-    pub (crate) height: i32,
+    pub(crate) width: i32,
+    pub(crate) height: i32,
 }
 
 pub(crate) trait Process {
