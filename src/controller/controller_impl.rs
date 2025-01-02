@@ -7,14 +7,15 @@ use crate::board::gen_board;
 use super::Controller;
 
 impl Controller {
-    pub(crate) fn new(width: i32, height: i32) -> Self {
+    pub(crate) fn new(width: i32, height: i32, mines: i32) -> Self {
         Self {
-            board: gen_board(width, height, 10), // TODO: parameterize
+            board: gen_board(width, height, mines),
             state: GameState {
                 board_view: vec![vec![PlayTile::hidden(); width as usize]; height as usize],
                 exploded: false,
                 width,
-                height
+                height,
+                mines
             },
         }
     }
@@ -23,18 +24,20 @@ impl Controller {
         let x = pos.0 as usize;
         let y = pos.1 as usize;
         let board_tile = &self.board[y][x];
-        self.state.board_view[y][x] = PlayTile {
+        let state = &mut self.state;
+        state.board_view[y][x] = PlayTile {
             flagged: false, // TODO
             revealed: true,
             mine_neighbors: board_tile.mine_neighbors,
             mine: board_tile.is_mine,
         };
-        self.state.exploded = board_tile.is_mine;
+        state.exploded = board_tile.is_mine;
         GameState {
-            board_view: self.state.board_view.clone(),
+            board_view: state.board_view.clone(),
             exploded: board_tile.is_mine,
-            width: self.state.width,
-            height: self.state.height,
+            width: state.width,
+            height: state.height,
+            mines: state.mines
         }
     }
 

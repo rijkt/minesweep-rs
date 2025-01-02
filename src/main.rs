@@ -9,7 +9,8 @@ mod solver;
 fn main() {
     let width = 7;
     let height = 5;
-    let mut controller = Controller::new(width, height);
+    let mines = 10;
+    let mut controller = Controller::new(width, height, mines);
     let renderer = ConsoleRenderer {};
     let mut solver = PlayerSolver {};
     renderer.render(&controller.state);

@@ -14,6 +14,7 @@ pub(crate) struct GameState {
     pub(crate) exploded: bool, // maybe moves/history
     pub(crate) width: i32,
     pub(crate) height: i32,
+    pub(crate) mines: i32,
 }
 
 pub(crate) trait Process {
