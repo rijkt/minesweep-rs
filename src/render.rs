@@ -33,24 +33,28 @@ impl Render for ConsoleRenderer {
 fn render_tile(tile: &PlayTile) -> &str {
     match tile {
         PlayTile {
+            pos: _,
             mine: true,
             flagged: _,
             revealed: true,
             mine_neighbors: _,
         } => "💣",
         PlayTile {
+            pos: _,
             mine: false,
             flagged: _,
             revealed: true,
             mine_neighbors: num,
         } => render_number_tile(num),
         PlayTile {
+            pos: _,
             mine: _,
             flagged: false,
             revealed: false,
             mine_neighbors: _,
         } => "❓",
         PlayTile {
+            pos: _,
             mine: _,
             flagged: true,
             revealed: false,

@@ -1,8 +1,9 @@
 use super::PlayTile;
 
 impl PlayTile {
-    pub(super) fn hidden() -> Self {
+    pub(super) fn hidden(pos: (i32, i32)) -> Self {
         Self {
+            pos,
             flagged: false,
             revealed: false,
             mine: false,
@@ -14,6 +15,7 @@ impl PlayTile {
 impl Clone for PlayTile {
     fn clone(&self) -> Self {
         Self {
+            pos: self.pos.clone(),
             flagged: self.flagged.clone(),
             revealed: self.revealed.clone(),
             mine_neighbors: self.mine_neighbors.clone(),
