@@ -23,8 +23,8 @@ impl Debug for BoardTile {
 
 pub(crate) fn gen_board(width: i32, height: i32, mines: i32) -> Vec<Vec<BoardTile>> {
     let mine_generation = gen_mines(width, height, mines);
-    let mine_pos = mine_generation.0;
-    let mine_count = mine_generation.1;
+    let mine_pos = mine_generation.mine_pos;
+    let mine_count = mine_generation.neighbors;
     (0..width)
         .cartesian_product(0..height)
         .sorted_by(|x, y| x.1.cmp(&y.1)) // column-wise
@@ -39,14 +39,19 @@ pub(crate) fn gen_board(width: i32, height: i32, mines: i32) -> Vec<Vec<BoardTil
         .collect()
 }
 
-fn gen_mines(max_x: i32, max_y: i32, mines: i32) -> (HashSet<(i32, i32)>, HashMap<(i32, i32), u8>) {
+struct GenMinesResult{
+    mine_pos: HashSet<(i32, i32)>, 
+    neighbors: HashMap<(i32, i32), u8>
+}
+
+fn gen_mines(max_x: i32, max_y: i32, mines: i32) -> GenMinesResult {
     let mine_pos: HashSet<(i32, i32)> = gen_rnd_positions(max_x, max_y)
         .unique()
         .take(mines as usize)
         .collect();
     assert_eq!(mine_pos.len(), mines as usize);
     let neighbors = count_neighbors(mine_pos.clone(), max_x, max_y);
-    (mine_pos, neighbors)
+    GenMinesResult{mine_pos, neighbors}
 }
 
 fn count_neighbors(

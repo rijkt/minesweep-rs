@@ -15,11 +15,11 @@ impl PlayTile {
 impl Clone for PlayTile {
     fn clone(&self) -> Self {
         Self {
-            pos: self.pos.clone(),
-            flagged: self.flagged.clone(),
-            revealed: self.revealed.clone(),
-            mine_neighbors: self.mine_neighbors.clone(),
-            mine: self.mine.clone(),
+            pos: self.pos,
+            flagged: self.flagged,
+            revealed: self.revealed,
+            mine_neighbors: self.mine_neighbors,
+            mine: self.mine,
         }
     }
 }

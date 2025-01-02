@@ -9,6 +9,7 @@ pub(crate) trait Solve {
 pub(crate) struct PlayerSolver { // TODO: hide using factory
 }
 
+#[allow(dead_code)]
 pub(crate) struct RandomSolver {
     rng: rand::prelude::ThreadRng,
 }

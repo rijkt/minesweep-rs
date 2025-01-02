@@ -57,20 +57,20 @@ impl Controller {
         }
     }
 
-    fn process_single(&mut self, request: ControllerRequest) -> () {
+    fn process_single(&mut self, request: ControllerRequest) {
         match request.req_type {
-            RequestType::REVEAL => {
+            RequestType::Reveal => {
                 self.reveal(request.pos);
             }
-            RequestType::REVEAL_AROUND => todo!(),
-            RequestType::FLAG => todo!(),
-            RequestType::UN_FLAG => todo!(),
+            RequestType::RevealAround => todo!(),
+            RequestType::Flag => todo!(),
+            RequestType::UnFlag => todo!(),
         }
     }
 }
 
 impl Process for Controller {
-    fn process(&mut self, requests: Vec<ControllerRequest>) -> () {
+    fn process(&mut self, requests: Vec<ControllerRequest>) {
         requests.into_iter().for_each(|req| {
             self.process_single(req);
         });
@@ -80,19 +80,19 @@ impl Process for Controller {
 impl CheckGameResult for Controller {
     fn check_result(&self) -> super::GameResult {
         if self.state.exploded {
-            GameResult::LOSE
+            GameResult::Lose
         } else if found_all_mines(&self.board, &self.state.board_view) {
-            GameResult::WIN
+            GameResult::Win
         } else {
-            GameResult::IN_PROGRESS
+            GameResult::InProgress
         }
     }
 }
 
 // if needed: optimize by keeping a runnig tally
 fn found_all_mines(
-    board: &Vec<Vec<BoardTile>>,
-    solver_view: &Vec<Vec<PlayTile>>,
+    board: &[Vec<BoardTile>],
+    solver_view: &[Vec<PlayTile>],
 ) -> bool {
     let mine_positions: HashSet<(i32, i32)> = board
         .iter()

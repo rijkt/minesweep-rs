@@ -7,18 +7,18 @@ use tabled::{
 };
 
 pub(crate) trait Render {
-    fn render(&self, state: &controller::GameState) -> ();
+    fn render(&self, state: &controller::GameState);
 }
 
 pub(crate) struct ConsoleRenderer {}
 
 impl Render for ConsoleRenderer {
-    fn render(&self, state: &controller::GameState) -> () {
+    fn render(&self, state: &controller::GameState) {
         println!();
         let view: Vec<Vec<&str>> = state
             .board_view
             .iter()
-            .map(|row| row.iter().map(|tile| render_tile(tile)).collect())
+            .map(|row| row.iter().map(render_tile).collect())
             .collect();
         let mut table = Table::from_iter(view);
         table.with(Style::ascii());

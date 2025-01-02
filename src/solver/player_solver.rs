@@ -7,7 +7,7 @@ impl Solve for PlayerSolver {
     fn solve(&mut self, game_state: &GameState) -> Vec<ControllerRequest> {
         let pos = parse_input(game_state.width, game_state.height);
         vec![ControllerRequest {
-            req_type: RequestType::REVEAL,
+            req_type: RequestType::Reveal,
             pos,
         }]
     }

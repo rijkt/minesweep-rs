@@ -5,6 +5,7 @@ use crate::controller::GameState;
 use crate::controller::RequestType;
 use rand::Rng;
 
+#[allow(dead_code)]
 impl RandomSolver {
     pub(crate) fn new(rng: rand::prelude::ThreadRng) -> Self {
         Self { rng }
@@ -14,7 +15,7 @@ impl RandomSolver {
 impl Solve for RandomSolver {
     fn solve(&mut self, game_state: &GameState) -> Vec<ControllerRequest> {
         vec![ControllerRequest {
-            req_type: RequestType::REVEAL,
+            req_type: RequestType::Reveal,
             pos: get_random_pos(game_state.width, game_state.height, &mut self.rng),
         }]
     }
