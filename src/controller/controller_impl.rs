@@ -10,10 +10,19 @@ use crate::board::gen_board;
 
 impl Controller {
     pub(crate) fn new(width: i32, height: i32, mines: i32) -> Self {
+        let board = gen_board(width, height, mines);
+        let board_view: Vec<Vec<PlayTile>> = board
+            .iter()
+            .map(|row| {
+                row.iter()
+                    .map(|board_tile| PlayTile::hidden(board_tile.pos))
+                    .collect()
+            })
+            .collect();
         Self {
-            board: gen_board(width, height, mines),
+            board,
             state: GameState {
-                board_view: vec![vec![PlayTile::hidden(); width as usize]; height as usize],
+                board_view,
                 exploded: false,
                 width,
                 height,
@@ -29,6 +38,7 @@ impl Controller {
         let board_tile = &self.board[y][x];
         let state = &mut self.state;
         state.board_view[y][x] = PlayTile {
+            pos,
             flagged: false, // TODO
             revealed: true,
             mine_neighbors: board_tile.mine_neighbors,

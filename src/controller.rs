@@ -3,6 +3,7 @@ mod controller_impl;
 mod play_tile_impl;
 
 pub(crate) struct PlayTile {
+    pub(crate) pos: (i32, i32),
     pub(crate) flagged: bool,
     pub(crate) revealed: bool,
     pub(crate) mine_neighbors: u8,
