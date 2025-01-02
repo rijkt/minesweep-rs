@@ -1,8 +1,8 @@
+use super::PlayTile;
 use super::Process;
 use super::RequestType;
 use super::ControllerRequest;
 use super::GameState;
-use super::play_tile;
 use crate::board::gen_board;
 use super::Controller;
 
@@ -11,7 +11,7 @@ impl Controller {
         Self {
             board: gen_board(width, height, 10), // TODO: parameterize
             state: GameState {
-                board_view: vec![vec![play_tile::PlayTile::hidden(); width as usize]; height as usize],
+                board_view: vec![vec![PlayTile::hidden(); width as usize]; height as usize],
                 exploded: false,
                 width,
                 height
@@ -23,7 +23,7 @@ impl Controller {
         let x = pos.0 as usize;
         let y = pos.1 as usize;
         let board_tile = &self.board[y][x];
-        self.state.board_view[y][x] = play_tile::PlayTile {
+        self.state.board_view[y][x] = PlayTile {
             flagged: false, // TODO
             revealed: true,
             mine_neighbors: board_tile.mine_neighbors,
