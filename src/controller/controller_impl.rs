@@ -1,3 +1,6 @@
+use std::collections::HashSet;
+
+use super::BoardTile;
 use super::CheckGameResult;
 use super::Controller;
 use super::ControllerRequest;
@@ -78,8 +81,30 @@ impl CheckGameResult for Controller {
     fn check_result(&self) -> super::GameResult {
         if self.state.exploded {
             GameResult::LOSE
+        } else if found_all_mines(&self.board, &self.state.board_view) {
+            GameResult::WIN
         } else {
             GameResult::IN_PROGRESS
         }
     }
+}
+
+// if needed: optimize by keeping a runnig tally
+fn found_all_mines(
+    board: &Vec<Vec<BoardTile>>,
+    solver_view: &Vec<Vec<PlayTile>>,
+) -> bool {
+    let mine_positions: HashSet<(i32, i32)> = board
+        .iter()
+        .flat_map(|row| row.iter())
+        .filter(|board_tile| board_tile.is_mine)
+        .map(|mine_tile| mine_tile.pos)
+        .collect();
+    let hidden_positions: HashSet<(i32, i32)> = solver_view
+        .iter()
+        .flat_map(|row| row.iter())
+        .filter(|play_tile| !play_tile.revealed)
+        .map(|hidden_tile| hidden_tile.pos)
+        .collect();
+    hidden_positions == mine_positions
 }
