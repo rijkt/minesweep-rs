@@ -13,7 +13,7 @@ impl Solve for PlayerSolver {
     }
 }
 
-pub(crate) fn parse_input(max_x: i32, max_y: i32) -> (i32, i32) {
+fn parse_input(max_x: i32, max_y: i32) -> (i32, i32) {
     println!("Enter position to reveal:");
     let mut input = String::new();
     io::stdin()

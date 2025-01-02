@@ -20,7 +20,7 @@ impl Solve for RandomSolver {
     }
 }
 
-pub(crate) fn get_random_pos(
+fn get_random_pos(
     width: i32,
     height: i32,
     rng: &mut rand::prelude::ThreadRng,

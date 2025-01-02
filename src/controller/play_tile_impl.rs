@@ -1,7 +1,7 @@
 use super::PlayTile;
 
 impl PlayTile {
-    pub(crate) fn hidden() -> Self {
+    pub(super) fn hidden() -> Self {
         Self {
             flagged: false,
             revealed: false,
