@@ -26,7 +26,7 @@ impl Render for ConsoleRenderer {
             Rows::first(),
             Border::inherit(Style::ascii())
         );
-        println!("{}", table);
+        println!("{table}");
     }
 }
 
@@ -74,6 +74,6 @@ fn render_number_tile(num: &u8) -> &str {
         6 => "6",
         7 => "7",
         8 => "8",
-        _ => panic!("Encountered invalid neighbor count {}", num),
+        _ => panic!("Encountered invalid neighbor count {num}"),
     }
 }

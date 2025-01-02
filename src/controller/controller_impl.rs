@@ -71,9 +71,9 @@ impl Controller {
 
 impl Process for Controller {
     fn process(&mut self, requests: Vec<ControllerRequest>) {
-        requests.into_iter().for_each(|req| {
+        for req in requests {
             self.process_single(req);
-        });
+        }
     }
 }
 

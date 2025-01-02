@@ -35,7 +35,7 @@ pub(crate) fn gen_board(width: i32, height: i32, mines: i32) -> Vec<Vec<BoardTil
         })
         .chunks(width as usize)
         .into_iter()
-        .map(|chunk| chunk.collect::<Vec<BoardTile>>())
+        .map(std::iter::Iterator::collect)
         .collect()
 }
 
@@ -75,8 +75,8 @@ fn count_neighbors(
 }
 
 fn distance(v1: (i32, i32), v2: (i32, i32)) -> u8 {
-    let d1 = (v2.0 - v1.0) as f64;
-    let d2 = (v2.1 - v1.1) as f64;
+    let d1 = f64::from(v2.0 - v1.0);
+    let d2 = f64::from(v2.1 - v1.1);
     (d1.powi(2) + d2.powi(2)).sqrt() as u8 // we only care about integers
 }
 
