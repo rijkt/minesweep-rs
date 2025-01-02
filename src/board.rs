@@ -23,8 +23,8 @@ impl Debug for BoardTile {
 
 pub(crate) fn gen_board(width: i32, height: i32, mines: i32) -> Vec<Vec<BoardTile>> {
     let mine_generation = gen_mines(width, height, mines);
-    let mine_pos = mine_generation.0;
-    let mine_count = mine_generation.1;
+    let mine_pos = mine_generation.mine_pos;
+    let mine_count = mine_generation.neighbors;
     (0..width)
         .cartesian_product(0..height)
         .sorted_by(|x, y| x.1.cmp(&y.1)) // column-wise
@@ -35,18 +35,23 @@ pub(crate) fn gen_board(width: i32, height: i32, mines: i32) -> Vec<Vec<BoardTil
         })
         .chunks(width as usize)
         .into_iter()
-        .map(|chunk| chunk.collect::<Vec<BoardTile>>())
+        .map(std::iter::Iterator::collect)
         .collect()
 }
 
-fn gen_mines(max_x: i32, max_y: i32, mines: i32) -> (HashSet<(i32, i32)>, HashMap<(i32, i32), u8>) {
+struct GenMinesResult{
+    mine_pos: HashSet<(i32, i32)>, 
+    neighbors: HashMap<(i32, i32), u8>
+}
+
+fn gen_mines(max_x: i32, max_y: i32, mines: i32) -> GenMinesResult {
     let mine_pos: HashSet<(i32, i32)> = gen_rnd_positions(max_x, max_y)
         .unique()
         .take(mines as usize)
         .collect();
     assert_eq!(mine_pos.len(), mines as usize);
     let neighbors = count_neighbors(mine_pos.clone(), max_x, max_y);
-    (mine_pos, neighbors)
+    GenMinesResult{mine_pos, neighbors}
 }
 
 fn count_neighbors(
@@ -70,8 +75,8 @@ fn count_neighbors(
 }
 
 fn distance(v1: (i32, i32), v2: (i32, i32)) -> u8 {
-    let d1 = (v2.0 - v1.0) as f64;
-    let d2 = (v2.1 - v1.1) as f64;
+    let d1 = f64::from(v2.0 - v1.0);
+    let d2 = f64::from(v2.1 - v1.1);
     (d1.powi(2) + d2.powi(2)).sqrt() as u8 // we only care about integers
 }
 

@@ -19,24 +19,25 @@ pub(crate) struct GameState {
 }
 
 pub(crate) trait Process {
-    fn process(&mut self, requests: Vec<ControllerRequest>) -> ();
+    fn process(&mut self, requests: Vec<ControllerRequest>);
 }
 
 pub(crate) enum GameResult {
-    WIN,
-    LOSE,
-    IN_PROGRESS
+    Win,
+    Lose,
+    InProgress
 }
 
 pub(crate) trait CheckGameResult {
     fn check_result(&self) -> GameResult;
 }
 
+#[allow(dead_code)] // TODO: implement
 pub(crate) enum RequestType {
-    REVEAL,
-    REVEAL_AROUND,
-    FLAG,
-    UN_FLAG,
+    Reveal,
+    RevealAround,
+    Flag,
+    UnFlag,
 }
 
 pub(crate) struct ControllerRequest {
