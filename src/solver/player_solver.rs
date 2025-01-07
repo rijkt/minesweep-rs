@@ -5,15 +5,11 @@ use std::io;
 impl Solve for PlayerSolver {
     fn solve(&mut self, game_state: &GameState) -> Vec<ControllerRequest> {
         println!("Enter position:");
-        let mut input = String::new();
-        io::stdin()
-            .read_line(&mut input)
-            .expect("Failed to read line");
-        let trimmed = input.trim();
-        if trimmed.is_empty() {
+        let input = read_input();
+        if input.is_empty() {
             return vec![];
         }
-        let pos_opt = parse_pos(trimmed, game_state.width, game_state.height);
+        let pos_opt = parse_pos(input.as_str(), game_state.width, game_state.height);
         pos_opt.map_or(vec![], |pos| {
             vec![ControllerRequest {
                 req_type: RequestType::Reveal,
@@ -21,6 +17,14 @@ impl Solve for PlayerSolver {
             }]
         })
     }
+}
+
+fn read_input() -> String {
+    let mut input = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read line");
+    input.trim().to_owned()
 }
 
 fn parse_pos(input: &str, max_x: i32, max_y: i32) -> Option<(i32, i32)> {
