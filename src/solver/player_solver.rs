@@ -39,7 +39,7 @@ fn parse_request(game_state: &GameState, input: String) -> Option<ControllerRequ
         }
         [prefix, x, y] => parse_prefixed(prefix, x, y),
         _ => {
-            println!("Please enter a valid command. Enter \"?\" for available options");
+            print_invalid_msg();
             None
         }
     }
@@ -53,9 +53,13 @@ fn parse_prefixed(prefix: &str, x: &str, y: &str) -> Option<ControllerRequest> {
         }
         "f" => todo!(),
         "b" => todo!(),
-        _ => None,
+        _ => {
+            print_invalid_msg();
+            None
+        },
     }
 }
+
 
 fn print_help() {
     println!("Available commands:");
@@ -69,6 +73,7 @@ fn parse_pos(token1: &str, token2: &str, max_x: i32, max_y: i32) -> Option<(i32,
     if let (Ok(x), Ok(y)) = (token1.parse::<i32>(), token2.parse::<i32>()) {
         validate_pos(x, y, max_x, max_y)
     } else {
+        print_invalid_msg();
         None
     }
 }
@@ -80,4 +85,8 @@ fn validate_pos(x: i32, y: i32, max_x: i32, max_y: i32) -> Option<(i32, i32)> {
     } else {
         Some((x, y))
     }
+}
+
+fn print_invalid_msg() {
+    println!("Please enter a valid command. Enter \"?\" for available options");
 }
