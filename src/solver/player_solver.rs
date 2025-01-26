@@ -61,7 +61,6 @@ fn parse_prefixed(
             pos,
             req_type: RequestType::Flag,
         }),
-        "b" => todo!(),
         _ => {
             print_invalid_msg();
             None
@@ -73,7 +72,6 @@ fn print_help() {
     println!("Available commands:");
     println!("x y - reveal position (x y)");
     println!("f x y - toggle flag on position (x y)");
-    println!("b x y - toggle bomb on position (x y)");
     println!("? - Print this message");
 }
 

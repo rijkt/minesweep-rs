@@ -64,7 +64,6 @@ impl Controller {
             }
             RequestType::RevealAround => todo!(),
             RequestType::Flag => todo!(),
-            RequestType::UnFlag => todo!(),
         }
     }
 }
