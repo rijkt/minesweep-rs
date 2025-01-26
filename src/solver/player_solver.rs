@@ -37,7 +37,7 @@ fn parse_request(game_state: &GameState, input: String) -> Option<ControllerRequ
             print_help();
             None
         }
-        [prefix, x, y] => parse_prefixed(prefix, x, y),
+        [prefix, x, y] => parse_prefixed(prefix, x, y, game_state.width, game_state.height),
         _ => {
             print_invalid_msg();
             None
@@ -45,21 +45,29 @@ fn parse_request(game_state: &GameState, input: String) -> Option<ControllerRequ
     }
 }
 
-fn parse_prefixed(prefix: &str, x: &str, y: &str) -> Option<ControllerRequest> {
+fn parse_prefixed(
+    prefix: &str,
+    token1: &str,
+    token2: &str,
+    max_x: i32,
+    max_y: i32,
+) -> Option<ControllerRequest> {
     match prefix {
         "?" => {
             print_help();
             None
         }
-        "f" => todo!(),
+        "f" => parse_pos(token1, token2, max_x, max_y).map(|pos| ControllerRequest {
+            pos,
+            req_type: RequestType::Flag,
+        }),
         "b" => todo!(),
         _ => {
             print_invalid_msg();
             None
-        },
+        }
     }
 }
-
 
 fn print_help() {
     println!("Available commands:");
