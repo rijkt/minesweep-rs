@@ -36,8 +36,7 @@ pub(crate) trait CheckGameResult {
 pub(crate) enum RequestType {
     Reveal,
     RevealAround,
-    Flag,
-    UnFlag,
+    Flag
 }
 
 pub(crate) struct ControllerRequest {
