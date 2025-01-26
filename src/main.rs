@@ -15,8 +15,8 @@ fn main() {
     let mut solver = PlayerSolver {};
     renderer.render(&controller.state);
     while matches!(controller.check_result(), GameResult::InProgress) {
-        let req = solver.solve(&controller.state);
-        controller.process(req);
+        let requests = solver.solve(&controller.state);
+        controller.process(requests);
         renderer.render(&controller.state);
     }
     match controller.check_result() {
