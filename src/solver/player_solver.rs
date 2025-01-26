@@ -1,10 +1,9 @@
 use super::{PlayerSolver, Solve};
 use crate::controller::{ControllerRequest, GameState, RequestType};
-use std::{io, vec};
+use std::{io::{self, Write}, vec};
 
 impl Solve for PlayerSolver {
     fn solve(&mut self, game_state: &GameState) -> Vec<ControllerRequest> {
-        println!("Enter position:");
         let input = read_input();
         if input.is_empty() {
             return vec![];
@@ -14,6 +13,8 @@ impl Solve for PlayerSolver {
 }
 
 fn read_input() -> String {
+    print!(">");
+    std::io::stdout().flush().expect("Failed to write to stdout");
     let mut input = String::new();
     io::stdin()
         .read_line(&mut input)
