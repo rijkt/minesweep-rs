@@ -1,6 +1,6 @@
 use super::{PlayerSolver, Solve};
 use crate::controller::{ControllerRequest, GameState, RequestType};
-use std::{io::{self, Write}, vec};
+use std::io::{self, Write};
 
 impl Solve for PlayerSolver {
     fn solve(&mut self, game_state: &GameState) -> Vec<ControllerRequest> {
@@ -14,7 +14,9 @@ impl Solve for PlayerSolver {
 
 fn read_input() -> String {
     print!(">");
-    std::io::stdout().flush().expect("Failed to write to stdout");
+    std::io::stdout()
+        .flush()
+        .expect("Failed to write to stdout");
     let mut input = String::new();
     io::stdin()
         .read_line(&mut input)
@@ -31,12 +33,36 @@ fn parse_request(game_state: &GameState, input: String) -> Option<ControllerRequ
                 pos,
             })
         }
-        [prefix, x, y] => todo!(),
+        ["?"] => {
+            print_help();
+            None
+        }
+        [prefix, x, y] => parse_prefixed(prefix, x, y),
         _ => {
-            println!("Please enter a valid command."); // TODO: specify
+            println!("Please enter a valid command. Enter \"?\" for available options");
             None
         }
     }
+}
+
+fn parse_prefixed(prefix: &str, x: &str, y: &str) -> Option<ControllerRequest> {
+    match prefix {
+        "?" => {
+            print_help();
+            None
+        }
+        "f" => todo!(),
+        "b" => todo!(),
+        _ => None,
+    }
+}
+
+fn print_help() {
+    println!("Available commands:");
+    println!("x y - reveal position (x y)");
+    println!("f x y - toggle flag on position (x y)");
+    println!("b x y - toggle bomb on position (x y)");
+    println!("? - Print this message");
 }
 
 fn parse_pos(token1: &str, token2: &str, max_x: i32, max_y: i32) -> Option<(i32, i32)> {
