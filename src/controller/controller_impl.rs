@@ -36,52 +36,45 @@ impl Controller {
 
     fn process_single(&mut self, request: ControllerRequest) {
         match request.req_type {
-            RequestType::Reveal => {
-                self.reveal(request.pos);
-            }
+            RequestType::Reveal => self.reveal(request.pos),
             RequestType::RevealAround => todo!(),
-            RequestType::Flag => {
-                self.flag(request.pos)
-            },
+            RequestType::Flag => self.flag(request.pos),
         }
     }
 
-    fn reveal(&mut self, pos: (i32, i32)) -> GameState {
+    fn reveal(&mut self, pos: (i32, i32)) {
         // TODO make immutable
         let x = pos.0 as usize;
         let y = pos.1 as usize;
         let board_tile = &self.board[y][x];
         let state = &mut self.state;
-        state.board_view[y][x] = PlayTile {
-            pos,
-            flagged: false, // TODO
-            revealed: true,
-            mine_neighbors: board_tile.mine_neighbors,
-            mine: board_tile.is_mine,
-        };
-        state.exploded = board_tile.is_mine;
-        GameState {
-            board_view: state.board_view.clone(),
-            exploded: board_tile.is_mine,
-            width: state.width,
-            height: state.height,
-            mines: state.mines,
-        }
+        let prev = &state.board_view[y][x];
+        if !prev.flagged {
+            state.board_view[y][x] = PlayTile {
+                pos,
+                flagged: false, // TODO
+                revealed: true,
+                mine_neighbors: board_tile.mine_neighbors,
+                mine: board_tile.is_mine,
+            };
+            state.exploded = board_tile.is_mine
+        } 
     }
 
     fn flag(&mut self, pos: (i32, i32)) {
         let x = pos.0 as usize;
         let y = pos.1 as usize;
         let prev = &self.state.board_view[y][x];
-        self.state.board_view[y][x] = PlayTile {
-            pos,
-            flagged: !prev.flagged,
-            revealed: false,
-            mine_neighbors: prev.mine_neighbors,
-            mine: false,
+        if !prev.revealed {
+            self.state.board_view[y][x] = PlayTile {
+                pos,
+                flagged: !prev.flagged,
+                revealed: false,
+                mine_neighbors: prev.mine_neighbors,
+                mine: false,
+            }
         }
     }
-
 }
 
 impl Process for Controller {
@@ -105,10 +98,7 @@ impl CheckGameResult for Controller {
 }
 
 // if needed: optimize by keeping a runnig tally
-fn found_all_mines(
-    board: &[Vec<BoardTile>],
-    solver_view: &[Vec<PlayTile>],
-) -> bool {
+fn found_all_mines(board: &[Vec<BoardTile>], solver_view: &[Vec<PlayTile>]) -> bool {
     let mine_positions: HashSet<(i32, i32)> = board
         .iter()
         .flat_map(|row| row.iter())
