@@ -34,6 +34,18 @@ impl Controller {
         }
     }
 
+    fn process_single(&mut self, request: ControllerRequest) {
+        match request.req_type {
+            RequestType::Reveal => {
+                self.reveal(request.pos);
+            }
+            RequestType::RevealAround => todo!(),
+            RequestType::Flag => {
+                self.flag(request.pos)
+            },
+        }
+    }
+
     fn reveal(&mut self, pos: (i32, i32)) -> GameState {
         // TODO make immutable
         let x = pos.0 as usize;
@@ -57,15 +69,19 @@ impl Controller {
         }
     }
 
-    fn process_single(&mut self, request: ControllerRequest) {
-        match request.req_type {
-            RequestType::Reveal => {
-                self.reveal(request.pos);
-            }
-            RequestType::RevealAround => todo!(),
-            RequestType::Flag => todo!(),
+    fn flag(&mut self, pos: (i32, i32)) {
+        let x = pos.0 as usize;
+        let y = pos.1 as usize;
+        let prev = &self.state.board_view[y][x];
+        self.state.board_view[y][x] = PlayTile {
+            pos,
+            flagged: !prev.flagged,
+            revealed: false,
+            mine_neighbors: prev.mine_neighbors,
+            mine: false,
         }
     }
+
 }
 
 impl Process for Controller {
