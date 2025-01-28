@@ -1,6 +1,7 @@
 use crate::controller;
 
 use super::controller::PlayTile;
+use itertools::Itertools;
 use tabled::{
     settings::{object::Rows, Border, Style},
     Table,
@@ -20,6 +21,18 @@ impl Render for ConsoleRenderer {
             .iter()
             .map(|row| row.iter().map(render_tile).collect())
             .collect();
+        let col_labels = (0..state.width).map(|x| x.to_string()).collect_vec();
+        let row_labels = (0..state.height).map(|x| x.to_string()).collect_vec();
+        let mut augmented_data: Vec<Vec<&str>> = Vec::new();
+        for (i, row) in view.iter().enumerate() {
+            let mut new_row = vec![row_labels[i]];
+            new_row.extend(row.iter().copied());
+            augmented_data.push(new_row);
+        }
+    
+        // Flatten the data into a single vector of rows
+        let full_table = std::iter::once(header) // TODO: add leading space
+        .chain(augmented_data.iter()).collect::<Vec<_>>();
         let mut table = Table::from_iter(view);
         table.with(Style::ascii());
         table.modify(
