@@ -4,7 +4,7 @@ use super::controller::PlayTile;
 use itertools::Itertools;
 use tabled::{
     settings::{
-        object::{Columns, Rows},
+        object::{Cell, Columns, Rows},
         Border, Modify, Style,
     },
     Table,
@@ -107,5 +107,6 @@ fn build_table(full_table: Vec<Vec<String>>) -> Table {
         .with(Style::ascii())
         .with(Modify::new(Rows::first()).with(Border::inherit(Style::ascii().top(' '))))
         .with(Modify::new(Columns::first()).with(Border::inherit(Style::ascii().left(' '))))
+        .with(Modify::new(Cell::new(0, 0)).with(Border::inherit(Style::ascii().top(' ').left(' '))))
         .to_owned()
 }
