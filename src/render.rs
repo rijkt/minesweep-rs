@@ -3,8 +3,10 @@ use crate::controller;
 use super::controller::PlayTile;
 use itertools::Itertools;
 use tabled::{
-    settings::{object::Rows, Border, Style},
-    Table,
+    settings::{
+        object::{Columns, Rows}, Border, Style
+    },
+    Table
 };
 
 pub(crate) trait Render {
@@ -23,11 +25,9 @@ impl Render for ConsoleRenderer {
             .collect();
         let full_table = add_coordinate_labels(state, rendered_board);
         let mut table = Table::from_iter(full_table);
-        table.with(Style::ascii());
-        table.modify(
-            Rows::first(),
-            Border::inherit(Style::ascii())
-        );
+        // table.with(Style::ascii());
+        table.modify(Rows::first(), Border::inherit(Style::ascii().top(' ')));
+        table.modify(Columns::first(), Border::inherit(Style::ascii().left(' ')));
         println!("{table}");
     }
 }
@@ -81,13 +81,17 @@ fn render_number_tile(num: &u8) -> &str {
     }
 }
 
-
-fn add_coordinate_labels(state: &controller::GameState, view: Vec<Vec<String>>) -> Vec<Vec<String>> {
+fn add_coordinate_labels(
+    state: &controller::GameState,
+    view: Vec<Vec<String>>,
+) -> Vec<Vec<String>> {
     let row_labels: Vec<String> = (0..state.height).map(|x| x.to_string()).collect_vec();
     let with_row_labels = add_row_labels(&view, row_labels);
     let col_labels: Vec<String> = (0..state.width).map(|x: i32| x.to_string()).collect_vec();
     let leading_col_labels = std::iter::once("".to_owned()).chain(col_labels).collect(); // for empty corner
-    std::iter::once(leading_col_labels).chain(with_row_labels).collect::<Vec<Vec<String>>>()
+    std::iter::once(leading_col_labels)
+        .chain(with_row_labels)
+        .collect::<Vec<Vec<String>>>()
 }
 
 fn add_row_labels(view: &[Vec<String>], row_labels: Vec<String>) -> Vec<Vec<String>> {
