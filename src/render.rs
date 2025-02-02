@@ -21,13 +21,12 @@ impl Render for ConsoleRenderer {
             .iter()
             .map(|row| row.iter().map(render_tile).collect())
             .collect();
-        let col_labels: Vec<String> = (0..state.width).map(|x: i32| x.to_string()).collect_vec();
         let row_labels: Vec<String> = (0..state.height).map(|x| x.to_string()).collect_vec();
-        let augmented_data = add_row_labels(&view, row_labels);
-    
-        // Flatten the data into a single vector of rows
-        let full_table: Vec<Vec<String>> = std::iter::once(col_labels) // TODO: add leading space at 0, 0
-        .chain(augmented_data).collect::<Vec<Vec<String>>>();
+        let with_row_labels = add_row_labels(&view, row_labels);
+        let col_labels: Vec<String> = (0..state.width).map(|x: i32| x.to_string()).collect_vec();
+        let leading_col_labels = std::iter::once("".to_owned()).chain(col_labels).collect();
+        let full_table: Vec<Vec<String>> = std::iter::once(leading_col_labels)
+        .chain(with_row_labels).collect::<Vec<Vec<String>>>();
         let mut table = Table::from_iter(full_table);
         table.with(Style::ascii());
         table.modify(
