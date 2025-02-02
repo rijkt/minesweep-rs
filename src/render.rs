@@ -4,9 +4,10 @@ use super::controller::PlayTile;
 use itertools::Itertools;
 use tabled::{
     settings::{
-        object::{Columns, Rows}, Border, Style
+        object::{Columns, Rows},
+        Border, Modify, Style,
     },
-    Table
+    Table,
 };
 
 pub(crate) trait Render {
@@ -23,11 +24,8 @@ impl Render for ConsoleRenderer {
             .iter()
             .map(|row| row.iter().map(render_tile).collect())
             .collect();
-        let full_table = add_coordinate_labels(state, rendered_board);
-        let mut table = Table::from_iter(full_table);
-        // table.with(Style::ascii());
-        table.modify(Rows::first(), Border::inherit(Style::ascii().top(' ')));
-        table.modify(Columns::first(), Border::inherit(Style::ascii().left(' ')));
+        let full_table_data = add_coordinate_labels(state, rendered_board);
+        let table = build_table(full_table_data);
         println!("{table}");
     }
 }
@@ -102,4 +100,12 @@ fn add_row_labels(view: &[Vec<String>], row_labels: Vec<String>) -> Vec<Vec<Stri
         augmented_data.push(new_row);
     }
     augmented_data
+}
+
+fn build_table(full_table: Vec<Vec<String>>) -> Table {
+    Table::from_iter(full_table)
+        .with(Style::ascii())
+        .with(Modify::new(Rows::first()).with(Border::inherit(Style::ascii().top(' '))))
+        .with(Modify::new(Columns::first()).with(Border::inherit(Style::ascii().left(' '))))
+        .to_owned()
 }
