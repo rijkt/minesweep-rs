@@ -39,14 +39,14 @@ impl Render for ConsoleRenderer {
 }
 
 fn render_tile(tile: &PlayTile) -> String {
-    match tile {
+    let rendered = match tile {
         PlayTile {
             pos: _,
             mine: true,
             flagged: _,
             revealed: true,
             mine_neighbors: _,
-        } => "💣".to_owned(),
+        } => "💣",
         PlayTile {
             pos: _,
             mine: false,
@@ -60,33 +60,34 @@ fn render_tile(tile: &PlayTile) -> String {
             flagged: false,
             revealed: false,
             mine_neighbors: _,
-        } => "❓".to_owned(),
+        } => "❓",
         PlayTile {
             pos: _,
             mine: _,
             flagged: true,
             revealed: false,
             mine_neighbors: _,
-        } => "🚩".to_owned(),
-    }
+        } => "🚩",
+    };
+    rendered.to_owned()
 }
 
-fn render_number_tile(num: &u8) -> String {
+fn render_number_tile(num: &u8) -> &str {
     match num {
-        0 => "⬜".to_owned(),
-        1 => "1".to_owned(),
-        2 => "2".to_owned(),
-        3 => "3".to_owned(),
-        4 => "4".to_owned(),
-        5 => "5".to_owned(),
-        6 => "6".to_owned(),
-        7 => "7".to_owned(),
-        8 => "8".to_owned(),
+        0 => "⬜",
+        1 => "1",
+        2 => "2",
+        3 => "3",
+        4 => "4",
+        5 => "5",
+        6 => "6",
+        7 => "7",
+        8 => "8",
         _ => panic!("Encountered invalid neighbor count {num}"),
     }
 }
 
-fn add_row_labels(view: &Vec<Vec<String>>, row_labels: Vec<String>) -> Vec<Vec<String>> {
+fn add_row_labels(view: &[Vec<String>], row_labels: Vec<String>) -> Vec<Vec<String>> {
     let mut augmented_data: Vec<Vec<String>> = Vec::new();
     for (i, row) in view.iter().enumerate() {
         let mut new_row = vec![row_labels[i].clone()]; // could be moved though
