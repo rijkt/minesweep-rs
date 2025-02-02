@@ -104,7 +104,7 @@ fn add_row_labels(view: &[Vec<String>], row_labels: Vec<String>) -> Vec<Vec<Stri
 
 fn build_table(full_table: Vec<Vec<String>>) -> Table {
     Table::from_iter(full_table)
-        .with(Style::ascii())
+        .with(Style::extended())
         .with(Modify::new(Rows::first()).with(Border::inherit(Style::ascii().top(' '))))
         .with(Modify::new(Columns::first()).with(Border::inherit(Style::ascii().left(' '))))
         .with(Modify::new(Cell::new(0, 0)).with(Border::inherit(Style::ascii().top(' ').left(' '))))
