@@ -16,17 +16,12 @@ pub(crate) struct ConsoleRenderer {}
 impl Render for ConsoleRenderer {
     fn render(&self, state: &controller::GameState) {
         println!();
-        let view: Vec<Vec<String>> = state
+        let rendered_board: Vec<Vec<String>> = state
             .board_view
             .iter()
             .map(|row| row.iter().map(render_tile).collect())
             .collect();
-        let row_labels: Vec<String> = (0..state.height).map(|x| x.to_string()).collect_vec();
-        let with_row_labels = add_row_labels(&view, row_labels);
-        let col_labels: Vec<String> = (0..state.width).map(|x: i32| x.to_string()).collect_vec();
-        let leading_col_labels = std::iter::once("".to_owned()).chain(col_labels).collect();
-        let full_table: Vec<Vec<String>> = std::iter::once(leading_col_labels)
-        .chain(with_row_labels).collect::<Vec<Vec<String>>>();
+        let full_table = add_coordinate_labels(state, rendered_board);
         let mut table = Table::from_iter(full_table);
         table.with(Style::ascii());
         table.modify(
@@ -84,6 +79,15 @@ fn render_number_tile(num: &u8) -> &str {
         8 => "8",
         _ => panic!("Encountered invalid neighbor count {num}"),
     }
+}
+
+
+fn add_coordinate_labels(state: &controller::GameState, view: Vec<Vec<String>>) -> Vec<Vec<String>> {
+    let row_labels: Vec<String> = (0..state.height).map(|x| x.to_string()).collect_vec();
+    let with_row_labels = add_row_labels(&view, row_labels);
+    let col_labels: Vec<String> = (0..state.width).map(|x: i32| x.to_string()).collect_vec();
+    let leading_col_labels = std::iter::once("".to_owned()).chain(col_labels).collect(); // for empty corner
+    std::iter::once(leading_col_labels).chain(with_row_labels).collect::<Vec<Vec<String>>>()
 }
 
 fn add_row_labels(view: &[Vec<String>], row_labels: Vec<String>) -> Vec<Vec<String>> {
