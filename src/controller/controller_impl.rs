@@ -50,15 +50,22 @@ impl Controller {
         let state = &mut self.state;
         let prev = &state.board_view[y][x];
         if !prev.flagged {
-            state.board_view[y][x] = PlayTile {
-                pos,
-                flagged: false, // TODO
-                revealed: true,
-                mine_neighbors: board_tile.mine_neighbors,
-                mine: board_tile.is_mine,
-            };
-            state.exploded = board_tile.is_mine
-        } 
+            if prev.revealed {
+                // TODO: remove direct recursion to avoid stack overflow
+                get_pos_around_safe(pos, self.state.width, self.state.height)
+                    .iter()
+                    .for_each(|neigbor| self.reveal(*neigbor));
+            } else {
+                state.board_view[y][x] = PlayTile {
+                    pos,
+                    flagged: false,
+                    revealed: true,
+                    mine_neighbors: board_tile.mine_neighbors,
+                    mine: board_tile.is_mine,
+                };
+                state.exploded = board_tile.is_mine
+            }
+        }
     }
 
     fn flag(&mut self, pos: (i32, i32)) {
@@ -75,6 +82,28 @@ impl Controller {
             }
         }
     }
+}
+
+fn get_pos_around_safe(pos: (i32, i32), width: i32, height: i32) -> Vec<(i32, i32)> {
+    [
+        // row above
+        (pos.0 - 1, pos.1 - 1),
+        (pos.0, pos.1 - 1),
+        (pos.0 + 1, pos.1 - 1),
+        // same row
+        (pos.0 - 1, pos.1),
+        (pos.0 + 1, pos.1),
+        // row below
+        (pos.0 - 1, pos.1 + 1),
+        (pos.0, pos.1 + 1),
+        (pos.0 + 1, pos.1 + 1),
+    ]
+    .iter()
+    .cloned()
+    .filter(|neighbor| {
+        neighbor.0 >= 0 && neighbor.0 <= width && neighbor.1 >= 0 && neighbor.1 <= height
+    })
+    .collect()
 }
 
 impl Process for Controller {
