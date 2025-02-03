@@ -44,15 +44,14 @@ impl Controller {
 
     fn reveal(&mut self, pos: (i32, i32)) {
         // TODO make immutable
-        let x = pos.0 as usize;
-        let y = pos.1 as usize;
+        let (x, y) = (pos.0 as usize, pos.1 as usize);
         let board_tile = &self.board[y][x];
         let state = &mut self.state;
         let prev = &state.board_view[y][x];
         if !prev.flagged {
             if prev.revealed {
                 // TODO: remove direct recursion to avoid stack overflow
-                get_pos_around_safe(pos, self.state.width, self.state.height)
+                get_safe_neighbors(pos, self.state.width, self.state.height)
                     .iter()
                     .for_each(|neigbor| self.reveal(*neigbor));
             } else {
@@ -84,19 +83,20 @@ impl Controller {
     }
 }
 
-fn get_pos_around_safe(pos: (i32, i32), width: i32, height: i32) -> Vec<(i32, i32)> {
+fn get_safe_neighbors(pos: (i32, i32), width: i32, height: i32) -> Vec<(i32, i32)> {
+    let (x, y) = (pos.0, pos.1);
     [
         // row above
-        (pos.0 - 1, pos.1 - 1),
-        (pos.0, pos.1 - 1),
-        (pos.0 + 1, pos.1 - 1),
-        // same row
-        (pos.0 - 1, pos.1),
-        (pos.0 + 1, pos.1),
+        (x - 1, y - 1),
+        (x, y - 1),
+        (x + 1, y - 1),
+        // current row
+        (x - 1, y),
+        (x + 1, y),
         // row below
-        (pos.0 - 1, pos.1 + 1),
-        (pos.0, pos.1 + 1),
-        (pos.0 + 1, pos.1 + 1),
+        (x - 1, y + 1),
+        (x, y + 1),
+        (x + 1, y + 1),
     ]
     .iter()
     .cloned()
