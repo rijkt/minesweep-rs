@@ -49,21 +49,11 @@ impl Controller {
         let current = &state.board_view[y][x];
         if !current.flagged {
             if current.revealed {
-                // TODO: remove direct recursion to avoid stack overflow
-                get_safe_neighbors(pos, self.state.width, self.state.height)
+                get_safe_neighbors(pos, state.width, state.height)
                     .iter()
-                    .for_each(|neigbor| self.reveal(*neigbor));
+                    .for_each(|neigbor| reveal_single(*neigbor, state, &self.board));
             } else {
-                let board_tile = &self.board[y][x];
-                let mine = board_tile.is_mine;
-                state.board_view[y][x] = PlayTile {
-                    pos,
-                    flagged: false,
-                    revealed: true,
-                    mine_neighbors: board_tile.mine_neighbors,
-                    mine,
-                };
-                state.exploded = mine
+                reveal_single(pos, state, &self.board);
             }
         }
     }
@@ -105,6 +95,20 @@ fn get_safe_neighbors(pos: (i32, i32), width: i32, height: i32) -> Vec<(i32, i32
         neighbor.0 >= 0 && neighbor.0 <= width && neighbor.1 >= 0 && neighbor.1 <= height
     })
     .collect()
+}
+
+fn reveal_single(pos: (i32, i32), state: &mut GameState, board: &[Vec<BoardTile>]) {
+    let (x, y) = (pos.0 as usize, pos.1 as usize);
+    let board_tile = &board[y][x];
+    let mine = board_tile.is_mine;
+    state.board_view[y][x] = PlayTile {
+        pos,
+        flagged: false,
+        revealed: true,
+        mine_neighbors: board_tile.mine_neighbors,
+        mine,
+    };
+    state.exploded = state.exploded || mine
 }
 
 impl Process for Controller {
