@@ -91,7 +91,7 @@ fn get_safe_neighbors(pos: (i32, i32), width: i32, height: i32) -> Vec<(i32, i32
     .iter()
     .cloned()
     .filter(|neighbor| {
-        neighbor.0 >= 0 && neighbor.0 <= width && neighbor.1 >= 0 && neighbor.1 <= height
+        neighbor.0 >= 0 && neighbor.0 < width && neighbor.1 >= 0 && neighbor.1 < height
     })
     .collect()
 }
