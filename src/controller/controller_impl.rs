@@ -37,7 +37,6 @@ impl Controller {
     fn process_single(&mut self, request: ControllerRequest) {
         match request.req_type {
             RequestType::Reveal => self.reveal(request.pos),
-            RequestType::RevealAround => todo!(),
             RequestType::Flag => self.flag(request.pos),
         }
     }

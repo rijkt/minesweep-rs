@@ -32,11 +32,11 @@ pub(crate) trait CheckGameResult {
     fn check_result(&self) -> GameResult;
 }
 
-#[allow(dead_code)] // TODO: implement
 pub(crate) enum RequestType {
+    /// Reveal a tile, if hidden. If already revealed, all tiles around it are revealed.
     Reveal,
-    RevealAround,
-    Flag
+    /// Toggle flag state on a tile.
+    Flag,
 }
 
 pub(crate) struct ControllerRequest {
