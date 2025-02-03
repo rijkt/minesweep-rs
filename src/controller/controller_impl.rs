@@ -37,28 +37,22 @@ impl Controller {
     fn process_single(&mut self, request: ControllerRequest) {
         match request.req_type {
             RequestType::Reveal => self.reveal(request.pos),
-            RequestType::RevealAround => todo!(),
             RequestType::Flag => self.flag(request.pos),
         }
     }
 
     fn reveal(&mut self, pos: (i32, i32)) {
         // TODO make immutable
-        let x = pos.0 as usize;
-        let y = pos.1 as usize;
-        let board_tile = &self.board[y][x];
-        let state = &mut self.state;
-        let prev = &state.board_view[y][x];
-        if !prev.flagged {
-            state.board_view[y][x] = PlayTile {
-                pos,
-                flagged: false, // TODO
-                revealed: true,
-                mine_neighbors: board_tile.mine_neighbors,
-                mine: board_tile.is_mine,
-            };
-            state.exploded = board_tile.is_mine
-        } 
+        let (x, y) = (pos.0 as usize, pos.1 as usize);
+        let state: &mut GameState = &mut self.state;
+        let current = &state.board_view[y][x];
+        if current.revealed {
+            get_safe_neighbors(pos, state.width, state.height)
+                .iter()
+                .for_each(|neigbor| reveal_single(*neigbor, state, &self.board));
+        } else {
+            reveal_single(pos, state, &self.board);
+        }
     }
 
     fn flag(&mut self, pos: (i32, i32)) {
@@ -74,6 +68,46 @@ impl Controller {
                 mine: false,
             }
         }
+    }
+}
+
+fn get_safe_neighbors(pos: (i32, i32), width: i32, height: i32) -> Vec<(i32, i32)> {
+    let (x, y) = (pos.0, pos.1);
+    [
+        // row above
+        (x - 1, y - 1),
+        (x, y - 1),
+        (x + 1, y - 1),
+        // current row
+        (x - 1, y),
+        (x + 1, y),
+        // row below
+        (x - 1, y + 1),
+        (x, y + 1),
+        (x + 1, y + 1),
+    ]
+    .iter()
+    .cloned()
+    .filter(|neighbor| {
+        neighbor.0 >= 0 && neighbor.0 < width && neighbor.1 >= 0 && neighbor.1 < height
+    })
+    .collect()
+}
+
+fn reveal_single(pos: (i32, i32), state: &mut GameState, board: &[Vec<BoardTile>]) {
+    let (x, y) = (pos.0 as usize, pos.1 as usize);
+    let board_tile = &board[y][x];
+    let mine = board_tile.is_mine;
+    let current = &state.board_view[y][x];
+    if !current.flagged {
+        state.board_view[y][x] = PlayTile {
+            pos,
+            flagged: false,
+            revealed: true,
+            mine_neighbors: board_tile.mine_neighbors,
+            mine,
+        };
+        state.exploded = state.exploded || mine
     }
 }
 
