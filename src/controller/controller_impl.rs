@@ -44,16 +44,14 @@ impl Controller {
     fn reveal(&mut self, pos: (i32, i32)) {
         // TODO make immutable
         let (x, y) = (pos.0 as usize, pos.1 as usize);
-        let state = &mut self.state;
+        let state: &mut GameState = &mut self.state;
         let current = &state.board_view[y][x];
-        if !current.flagged {
-            if current.revealed {
-                get_safe_neighbors(pos, state.width, state.height)
-                    .iter()
-                    .for_each(|neigbor| reveal_single(*neigbor, state, &self.board));
-            } else {
-                reveal_single(pos, state, &self.board);
-            }
+        if current.revealed {
+            get_safe_neighbors(pos, state.width, state.height)
+                .iter()
+                .for_each(|neigbor| reveal_single(*neigbor, state, &self.board));
+        } else {
+            reveal_single(pos, state, &self.board);
         }
     }
 
@@ -100,14 +98,17 @@ fn reveal_single(pos: (i32, i32), state: &mut GameState, board: &[Vec<BoardTile>
     let (x, y) = (pos.0 as usize, pos.1 as usize);
     let board_tile = &board[y][x];
     let mine = board_tile.is_mine;
-    state.board_view[y][x] = PlayTile {
-        pos,
-        flagged: false,
-        revealed: true,
-        mine_neighbors: board_tile.mine_neighbors,
-        mine,
-    };
-    state.exploded = state.exploded || mine
+    let current = &state.board_view[y][x];
+    if !current.flagged {
+        state.board_view[y][x] = PlayTile {
+            pos,
+            flagged: false,
+            revealed: true,
+            mine_neighbors: board_tile.mine_neighbors,
+            mine,
+        };
+        state.exploded = state.exploded || mine
+    }
 }
 
 impl Process for Controller {
