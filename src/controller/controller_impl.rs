@@ -45,24 +45,25 @@ impl Controller {
     fn reveal(&mut self, pos: (i32, i32)) {
         // TODO make immutable
         let (x, y) = (pos.0 as usize, pos.1 as usize);
-        let board_tile = &self.board[y][x];
         let state = &mut self.state;
-        let prev = &state.board_view[y][x];
-        if !prev.flagged {
-            if prev.revealed {
+        let current = &state.board_view[y][x];
+        if !current.flagged {
+            if current.revealed {
                 // TODO: remove direct recursion to avoid stack overflow
                 get_safe_neighbors(pos, self.state.width, self.state.height)
                     .iter()
                     .for_each(|neigbor| self.reveal(*neigbor));
             } else {
+                let board_tile = &self.board[y][x];
+                let mine = board_tile.is_mine;
                 state.board_view[y][x] = PlayTile {
                     pos,
                     flagged: false,
                     revealed: true,
                     mine_neighbors: board_tile.mine_neighbors,
-                    mine: board_tile.is_mine,
+                    mine,
                 };
-                state.exploded = board_tile.is_mine
+                state.exploded = mine
             }
         }
     }
